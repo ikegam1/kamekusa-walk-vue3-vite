@@ -13,13 +13,6 @@ const count = ref(0)
 export default {
   components: {
     KameCanvas
-  },
-  data() {
-    return {
-      radius: 50,
-      x: 0,
-      y: 0
-    }
   }
 }
 
@@ -27,8 +20,7 @@ export default {
 
 <template>
   <h1>{{ msg }}</h1>
-  <KameCanvas :radius="radius" />
-  <p><input type="range" min="0" max="100" v-model.number="radius"></p>
+  <KameCanvas />
 </template>
 
 <style scoped>
