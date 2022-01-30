@@ -1,12 +1,12 @@
 <script setup>
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import KameCanvas from './components/KameCanvas.vue'
 import 'element-plus/dist/index.css'
 </script>
 
 <template>
-  <HelloWorld msg="リクガメの健康を見守るシステム" />
+  <KameCanvas msg="リクガメの健康を見守るシステム" />
 </template>
 
 <style>

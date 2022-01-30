@@ -36,8 +36,13 @@ let lineData = {
     },
   ],
 }
+
+defineProps({
+  msg: String
+})
 </script>
 <template>
+  <h1>{{ msg }}</h1>
   <el-row justify="center">
     <el-col :span="15">
       <canvas width="600" height="300" class="canvas" id="kame-map"></canvas>
