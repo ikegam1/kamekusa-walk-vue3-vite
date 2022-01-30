@@ -162,15 +162,17 @@ export default {
             min = 0
             hour++
           }
-          this.ctx.fillRect(0, 274, 65, 300)
-          this.ctx.fillStyle = "darkgreen"
-          this.ctx.fillText(`${hour}:${min}`, 5, 294)
-          this.ctx.fillStyle = "beige"
+          if (hour <= 23 ) {
+           this.ctx.fillRect(0, 274, 65, 300)
+           this.ctx.fillStyle = "darkgreen"
+           this.ctx.fillText(`${hour}:${min}`, 5, 294)
+           this.ctx.fillStyle = "beige"
+          }
           i++
         }
         ,10
       ) 
-      setTimeout(() => clearInterval(timer), 10*4441)
+      setTimeout(() => clearInterval(timer), 10*4440)
     }
   },
   async mounted() {
