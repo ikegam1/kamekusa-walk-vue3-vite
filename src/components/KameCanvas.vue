@@ -1,29 +1,28 @@
 <script setup>
-import { Chart, registerables } from "chart.js";
-import { LineChart } from "vue-chart-3";
-import axios from "axios";
+import { Chart, registerables } from "chart.js"
+import { LineChart } from "vue-chart-3"
+import axios from "axios"
 import { format, parseISO, toDate } from 'date-fns'
-Chart.register(...registerables);
+Chart.register(...registerables)
 
-
-const kameImg = new Image();
-const houseImg = new Image();
-const waterImg = new Image();
-const foodImg = new Image();
-const lightImg = new Image();
-const kameLImg = new Image();
-const kameRImg = new Image();
-const kameUImg = new Image();
-const kameDImg = new Image();
-kameImg.src = "/src/assets/img/pan_kame.png";
-houseImg.src = "/src/assets/img/house.png";
-waterImg.src = "/src/assets/img/water.png";
-foodImg.src = "/src/assets/img/food.png";
-lightImg.src = "/src/assets/img/light.png";
-kameLImg.src = "/src/assets/img/kame_left.png";
-kameRImg.src = "/src/assets/img/pan_kame.png";
-kameUImg.src = "/src/assets/img/kame_up.png";
-kameDImg.src = "/src/assets/img/kame_down.png";
+const kameImg = new Image()
+const houseImg = new Image()
+const waterImg = new Image()
+const foodImg = new Image()
+const lightImg = new Image()
+const kameLImg = new Image()
+const kameRImg = new Image()
+const kameUImg = new Image()
+const kameDImg = new Image()
+kameImg.src = "/src/assets/img/pan_kame.png"
+houseImg.src = "/src/assets/img/house.png"
+waterImg.src = "/src/assets/img/water.png"
+foodImg.src = "/src/assets/img/food.png"
+lightImg.src = "/src/assets/img/light.png"
+kameLImg.src = "/src/assets/img/kame_left.png"
+kameRImg.src = "/src/assets/img/pan_kame.png"
+kameUImg.src = "/src/assets/img/kame_up.png"
+kameDImg.src = "/src/assets/img/kame_down.png"
 
 let lineData = {
   labels: [...Array(24).keys()],
@@ -36,7 +35,7 @@ let lineData = {
       tension: 1,
     },
   ],
-};
+}
 </script>
 <template>
   <el-row justify="center">
@@ -45,7 +44,7 @@ let lineData = {
       <h2>kamexaの軌跡</h2>
       <el-row justify="center">
         <el-col :span="24">
-          <el-button type="success" @click="drawStart" size="large">描画スタート</el-button>
+          <el-button type="success" @click="drawStart" size="large" v-bind:disabled="!isLoading">描画スタート</el-button>
         </el-col>
       </el-row>
     </el-col>
@@ -70,21 +69,27 @@ export default {
       month: 1,
       day: 30,
       parsedData: [],
-      lineData: {}
+      lineData: {},
+      isLoading: false
     }
   },
   computed: {
     chartData: function() {
-      return this.lineData;
+      return this.lineData
+    }
+  },
+  watch: {
+    activityData: function() {
+      this.isLoading = true
     }
   },
   methods: {
     draw() {
-      this.ctx.strokeStyle = "rgb(32, 128, 32)";
-      this.ctx.lineWidth = 1;
-      this.ctx.moveTo(this.prevX, this.prevY);
-      this.ctx.lineTo(this.x, this.y);
-      this.ctx.stroke();
+      this.ctx.strokeStyle = "rgb(32, 128, 32)"
+      this.ctx.lineWidth = 1
+      this.ctx.moveTo(this.prevX, this.prevY)
+      this.ctx.lineTo(this.x, this.y)
+      this.ctx.stroke()
       
       if (this.direction === 'L'){ this.ctx.drawImage(this.kameLImg, this.x, this.y, 64, 64) }
       else if (this.direction === 'R'){ this.ctx.drawImage(this.kameRImg, this.x, this.y, 64, 64) }
@@ -98,17 +103,16 @@ export default {
     drawPrepare() {
       let _activityData = JSON.parse(JSON.stringify(this.activityData))
 
-      const xmax = _activityData.reduce((p, c) => p.X > c.X ? p : c);
-      const xmin = _activityData.reduce((p, c) => p.X < c.X ? p : c);
-      const ymax = _activityData.reduce((p, c) => p.Y > c.Y ? p : c);
-      const ymin = _activityData.reduce((p, c) => p.Y < c.Y ? p : c);
-      this.x = Math.round(xmax.X * 2750, 2)
-      console.log(format(new Date(), "y/M/d"));
+      const xmax = _activityData.reduce((p, c) => p.X > c.X ? p : c)
+      const xmin = _activityData.reduce((p, c) => p.X < c.X ? p : c)
+      const ymax = _activityData.reduce((p, c) => p.Y > c.Y ? p : c)
+      const ymin = _activityData.reduce((p, c) => p.Y < c.Y ? p : c)
+      console.log(format(new Date(), "y/M/d"))
 
       let _moved = Array.from({length: 24}, () => 0)
       _activityData.forEach((v) => {
-        let hour = format(toDate(parseISO(v.Timestamp)), "H");
-        let min = format(toDate(parseISO(v.Timestamp)), "m");
+        let hour = format(toDate(parseISO(v.Timestamp)), "H")
+        let min = format(toDate(parseISO(v.Timestamp)), "m")
 
         if (typeof this.parsedData[hour] === 'undefined'){
           this.parsedData[hour] = []
@@ -119,20 +123,20 @@ export default {
           this.parsedData[hour][min].push({x: v.X, y: v.Y, direction: v.Direction})
         }
         _moved[hour] += parseInt(v.Moved*10)
-      });
+      })
       this.lineData.datasets[0].data = _moved
 
-      this.ctx.drawImage(this.houseImg, 480 , 20, 120, 120);
-      this.ctx.drawImage(this.foodImg, 0 , 20, 100, 100);
-      this.ctx.drawImage(this.waterImg, 0 , 190, 100, 100);
-      this.ctx.drawImage(this.lightImg, 400 , 230, 80, 80);
+      this.ctx.drawImage(this.houseImg, 480 , 20, 120, 120)
+      this.ctx.drawImage(this.foodImg, 0 , 20, 100, 100)
+      this.ctx.drawImage(this.waterImg, 0 , 190, 100, 100)
+      this.ctx.drawImage(this.lightImg, 400 , 230, 80, 80)
     },
     async drawStart() {
       // 1日あたり180*24=4440ポイントの再生
       const timerapps = []
-      let i = 0;
-      let hour = 1;
-      let min = 1;
+      let i = 0
+      let hour = 1
+      let min = 1
       let timer = setInterval(() => {
           if ( i === 0 ){
             this.prevX = 520
@@ -152,16 +156,16 @@ export default {
             this.draw()
           }
           if (i % 3 === 0){
-            min++;
+            min++
           }
           if (min === 60 ) {
             min = 0
-            hour++;
+            hour++
           }
-          this.ctx.fillRect(0, 274, 65, 300);
-          this.ctx.fillStyle = "darkgreen";
-          this.ctx.fillText(`${hour}:${min}`, 5, 294);
-          this.ctx.fillStyle = "beige";
+          this.ctx.fillRect(0, 274, 65, 300)
+          this.ctx.fillStyle = "darkgreen"
+          this.ctx.fillText(`${hour}:${min}`, 5, 294)
+          this.ctx.fillStyle = "beige"
           i++
         }
         ,10
@@ -172,12 +176,12 @@ export default {
   async mounted() {
     this.ctx = document.getElementById('kame-map').getContext('2d')
     this.ctx.beginPath()
-    this.ctx.fillStyle = "beige";
+    this.ctx.fillStyle = "beige"
     this.ctx.fillRect(0, 0, 600, 300)
-    this.ctx.font = "bold 18px sans-serif";
+    this.ctx.font = "bold 18px sans-serif"
 
-    axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
-    axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+    axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8'
+    axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*'
     await axios.get('http://localhost:7071/api/HttpExample')
       .then(response => response.data.body)
       .then(body => (this.activityData = body))
